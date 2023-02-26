@@ -77,6 +77,8 @@ export class Assignment3 extends Scene {
 
 class Gouraud_Shader extends Shader {
     // This is a Shader using Phong_Shader as template
+    // Vertex shader colors vertices, gives smooth appearance
+    // Fragment shader colors pixels
     // TODO: Modify the glsl coder here to create a Gouraud Shader (Planet 2)
 
     constructor(num_lights = 2) {
@@ -94,6 +96,7 @@ class Gouraud_Shader extends Shader {
         uniform float light_attenuation_factors[N_LIGHTS];
         uniform vec4 shape_color;
         uniform vec3 squared_scale, camera_center;
+        varying vec4 vertex_color;
 
         // Specifier "varying" means a variable's final value will be passed from the vertex shader
         // on to the next phase (fragment shader), then interpolated per-fragment, weighted by the
@@ -133,6 +136,7 @@ class Gouraud_Shader extends Shader {
 
     vertex_glsl_code() {
         // ********* VERTEX SHADER *********
+        // color calculation should occur here
         return this.shared_glsl_code() + `
             attribute vec3 position, normal;                            
             // Position is expressed in object coordinates.
@@ -146,6 +150,10 @@ class Gouraud_Shader extends Shader {
                 // The final normal vector in screen space.
                 N = normalize( mat3( model_transform ) * normal / squared_scale);
                 vertex_worldspace = ( model_transform * vec4( position, 1.0 ) ).xyz;
+                // Compute an initial (ambient) color:
+                vertex_color = vec4( shape_color.xyz * ambient, shape_color.w );
+                // Compute the final color with contributions from lights:
+                vertex_color.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
             } `;
     }
 
@@ -155,13 +163,9 @@ class Gouraud_Shader extends Shader {
         // Fragments affect the final image or get discarded due to depth.
         return this.shared_glsl_code() + `
             void main(){                                                           
-                // Compute an initial (ambient) color:
-                gl_FragColor = vec4( shape_color.xyz * ambient, shape_color.w );
-                // Compute the final color with contributions from lights:
-                gl_FragColor.xyz += phong_model_lights( normalize( N ), vertex_worldspace );
+                gl_FragColor = vertex_color;
             } `;
     }
-
     send_material(gl, gpu, material) {
         // send_material(): Send the desired shape-wide material qualities to the
         // graphics card, where they will tweak the Phong lighting formula.
