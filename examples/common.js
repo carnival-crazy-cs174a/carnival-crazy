@@ -127,7 +127,7 @@ const Windmill = defs.Windmill =
                 const newNormal = spin.times(vec4(0, 0, 1, 0)).to3();
                 // Propagate the same normal to all three vertices:
                 this.arrays.normal.push(newNormal, newNormal, newNormal);
-                this.arrays.texture_coord.push(...Vec.cast([0, 0], [0, 1], [1, 0]));
+                this.arrays.texture_coord.push(...Vector.cast([0, 0], [0, 1], [1, 0]));
                 // Procedurally connect the 3 new vertices into triangles:
                 this.indices.push(3 * i, 3 * i + 1, 3 * i + 2);
             }

@@ -17,6 +17,10 @@ export class Carnival extends Scene {
             circle: new defs.Regular_2D_Polygon(1, 15),
             skybox: new defs.Cube(),
             floor: new defs.Cube(),
+            ferris_wheel: new defs.Cylindrical_Tube(50, 50),
+            ferris_spoke: new defs.Capped_Cylinder(50, 50),
+            // ferris_wheel: new defs.Rounded_Capped_Cylinder(50, 50),
+            //ferris_wheel: new defs.Capped_Cylinder(50, 50),
         };
 
         // *** Materials
@@ -29,7 +33,9 @@ export class Carnival extends Scene {
             skybox: new Material(new defs.Phong_Shader(),
                 {ambient: 1, diffusivity: 1, color: hex_color("#87CEEB")}),
             floor: new Material(new defs.Phong_Shader(),
-                {ambient: 1, diffusivity: 1, color: hex_color("#7CFC00")}),
+                {ambient: 1, diffusivity: 1, color: hex_color("#388004")}),
+            ferris_wheel: new Material(new defs.Phong_Shader(), 
+                {ambient: 1, diffusivity: 1, color: hex_color("#D3D3D3")}),
         }
 
         this.initial_camera_location = Mat4.look_at(vec3(0, 10, 20), vec3(0, 0, 0), vec3(0, 1, 0));
@@ -67,13 +73,36 @@ export class Carnival extends Scene {
         const t = program_state.animation_time / 1000, dt = program_state.animation_delta_time / 1000;
         
         let model_transform = Mat4.identity();
-        //=============================================== skybox =============================================
+        //=============================================== skybox ============================================
         let skybox_transform = Mat4.scale(60, 40, 60);
         this.shapes.skybox.draw(context, program_state, skybox_transform, this.materials.skybox);
         //=============================================== floor =============================================
-        let floor_transform = Mat4.scale(60, 0.5, 60);
+        let floor_transform = Mat4.scale(60, 0.1, 60);
         this.shapes.floor.draw(context, program_state, floor_transform, this.materials.floor);
+        //============================================ ferris wheel =========================================
+        // let ferris_transform = Mat4.scale(15, 15, 15);
+        // ferris_transform = ferris_transform.times(Mat4.translation(0, 15, 0));
+        let f_wheel_scale = 15;
+        let f_wheel_transform = Mat4.translation(0, f_wheel_scale + 0.1, -35);  // translate ferris wheel up and to back
+        f_wheel_transform = f_wheel_transform.times(Mat4.scale(f_wheel_scale, f_wheel_scale, f_wheel_scale*(2/3)));  // scale it to be larger
+        this.shapes.ferris_wheel.draw(context, program_state, f_wheel_transform, this.materials.ferris_wheel);
+        
+        let num_spokes = 10;
 
+       // for(let i = 0; i < num_spokes; i++){
+            let f_spoke_scale = f_wheel_scale / 3;
+            let f_spoke_transform = Mat4.translation(0, f_wheel_scale + 0.1, -35 + f_wheel_scale*(5/18));  // translate ferris wheel up and to back
+            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/50, f_spoke_scale*6, f_wheel_scale/50));  // scale it to be larger
+           // f_spoke_transform = f_spoke_transform.times(Mat4.rotation((i / num_spokes)*(2*Math.PI)), 0, 0, 1);
+            f_spoke_transform = f_spoke_transform.times(Mat4.rotation((Math.PI) / 2, 1, 0, 0)); // rotate the spoke so that it is oriented properly to scale it
+            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel.override({color: hex_color("#5A5A5A")})); // .override({color: hex_color("#5A5A5A")})
+        
+            f_spoke_transform = Mat4.translation(0, f_wheel_scale + 0.1, -35 - f_wheel_scale*(5/18));  // translate ferris wheel up and to back
+            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/50, f_spoke_scale*6, f_wheel_scale/50));  // scale it to be larger
+            f_spoke_transform = f_spoke_transform.times(Mat4.rotation((Math.PI) / 2, 1, 0, 0)); // rotate the spoke so that it is oriented properly to scale it
+            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel.override({color: hex_color("#5A5A5A")})); // .override({color: hex_color("#5A5A5A")})
+    //    }
+        
 
 //        this.shapes.torus.draw(context, program_state, model_transform, this.materials.test.override({color: yellow}));
     }
