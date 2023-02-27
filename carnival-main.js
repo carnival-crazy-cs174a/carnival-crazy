@@ -89,19 +89,21 @@ export class Carnival extends Scene {
         
         let num_spokes = 10;
 
-       // for(let i = 0; i < num_spokes; i++){
-            let f_spoke_scale = f_wheel_scale / 3;
-            let f_spoke_transform = Mat4.translation(0, f_wheel_scale + 0.1, -35 + f_wheel_scale*(5/18));  // translate ferris wheel up and to back
-            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/50, f_spoke_scale*6, f_wheel_scale/50));  // scale it to be larger
-           // f_spoke_transform = f_spoke_transform.times(Mat4.rotation((i / num_spokes)*(2*Math.PI)), 0, 0, 1);
+        let f_spoke_scale = f_wheel_scale / 3;
+        for(let i = 0; i < num_spokes; i++){
+            let f_spoke_transform = Mat4.identity();
+            f_spoke_transform = f_spoke_transform.times(Mat4.translation(0, f_wheel_scale + 0.1, -35 + f_wheel_scale*(5/18)));  // translate ferris spokes up and to back
+            f_spoke_transform = f_spoke_transform.times(Mat4.rotation((i / num_spokes)*(2*Math.PI), 0, 0, 1));
+            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/60, f_spoke_scale*6, f_wheel_scale/60));  // scale it to be larger
             f_spoke_transform = f_spoke_transform.times(Mat4.rotation((Math.PI) / 2, 1, 0, 0)); // rotate the spoke so that it is oriented properly to scale it
-            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel.override({color: hex_color("#5A5A5A")})); // .override({color: hex_color("#5A5A5A")})
+            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel); // .override({color: hex_color("#5A5A5A")})
         
             f_spoke_transform = Mat4.translation(0, f_wheel_scale + 0.1, -35 - f_wheel_scale*(5/18));  // translate ferris wheel up and to back
-            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/50, f_spoke_scale*6, f_wheel_scale/50));  // scale it to be larger
+            f_spoke_transform = f_spoke_transform.times(Mat4.rotation((i / num_spokes)*(2*Math.PI), 0, 0, 1));
+            f_spoke_transform = f_spoke_transform.times(Mat4.scale(f_wheel_scale/60, f_spoke_scale*6, f_wheel_scale/60));  // scale it to be larger
             f_spoke_transform = f_spoke_transform.times(Mat4.rotation((Math.PI) / 2, 1, 0, 0)); // rotate the spoke so that it is oriented properly to scale it
-            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel.override({color: hex_color("#5A5A5A")})); // .override({color: hex_color("#5A5A5A")})
-    //    }
+            this.shapes.ferris_spoke.draw(context, program_state, f_spoke_transform, this.materials.ferris_wheel); // .override({color: hex_color("#5A5A5A")})
+        }
         
 
 //        this.shapes.torus.draw(context, program_state, model_transform, this.materials.test.override({color: yellow}));
