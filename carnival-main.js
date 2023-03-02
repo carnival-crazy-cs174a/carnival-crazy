@@ -1,6 +1,6 @@
 import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
-import Booths from "./thingamabobs/booths.js";
+import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 
 const {
@@ -25,8 +25,6 @@ export class Carnival extends Scene {
     // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
     super();
 
-    this.balloon = new Balloon();
-
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
       torus: new defs.Torus(15, 15),
@@ -35,44 +33,10 @@ export class Carnival extends Scene {
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
       floor: new defs.Cube(),
-      roof: new defs.Closed_Cone(15, 15),
-      poles: new defs.Rounded_Capped_Cylinder(500, 500),
-      table: new defs.Cube(),
     };
 
     // *** Materials
     this.materials = {
-      poles: new Material(new defs.Phong_Shader(), {
-        ambient: 0.4,
-        diffusivity: 0.6,
-        color: hex_color("#FFFFFF"),
-      }),
-      test2: new Material(new Gouraud_Shader(), {
-        ambient: 0.4,
-        diffusivity: 0.6,
-        color: hex_color("#992828"),
-      }),
-      red_ring_roof: new Material(new Ring_Shader(), {
-        ambient: 0,
-        diffusivity: 1,
-        specularity: 1,
-        color: hex_color("#FF0000"),
-      }),
-      red_table: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#CF0000"),
-      }),
-      blue: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#077DDF"),
-      }),
-      yellow: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#F6D003"),
-      }),
       skybox: new Material(new defs.Phong_Shader(), {
         ambient: 1,
         diffusivity: 1,
@@ -90,6 +54,9 @@ export class Carnival extends Scene {
       vec3(0, 0, 0),
       vec3(0, 1, 0)
     );
+
+    this.balloon = new Balloon();
+    this.booth = new Booth();
   }
 
   make_control_panel() {}
@@ -137,7 +104,7 @@ export class Carnival extends Scene {
       this.materials.floor
     );
 
-    Booths(context, program_state, this.shapes, this.materials);
+    this.booth.draw(context, program_state);
     this.balloon.draw(
       context,
       program_state,

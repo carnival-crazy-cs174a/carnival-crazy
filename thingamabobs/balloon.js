@@ -32,9 +32,7 @@ export default class Balloon {
       .times(Mat4.rotation((3 * Math.PI) / 2, 1, 0, 0)),
   };
 
-  constructor() {
-    this.shader = new defs.Phong_Shader();
-  }
+  constructor() {}
 
   draw(context, program_state, location, color) {
     const body_transform = location.times(this.default_transforms.body);
