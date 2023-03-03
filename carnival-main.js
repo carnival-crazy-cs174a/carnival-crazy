@@ -1,9 +1,8 @@
 import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
-import Booth from "./thingamabobs/thingamabobs/booth.js";
+import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
-import Balloon from "./thingamabobs/balloon.js";
 import Dart from "./thingamabobs/darts.js";
 
 const {
@@ -56,20 +55,31 @@ export class Carnival extends Scene {
     };
 
     this.initial_camera_location = Mat4.look_at(
-      vec3(0, 10, 20),
-      vec3(0, 0, 0),
+      vec3(0, 3, 10),
+      vec3(0, 3, 0),
       vec3(0, 1, 0)
     );
 
     this.balloon = new Balloon();
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
+
+    this.toss = false;
+    this.elapsed_seconds = 0;
   }
+
   make_control_panel() {
     // maybe add a "play darts game" button for each game we implement that zooms you into view
     // then once you're in the game the buttons available change? like if you're in the darts game then we make a set of controls appear specifically for that game
     // then when you leave the game those controls disappear
     // same for if we make it so you can ride the ferris wheel
+    this.key_triggered_button("Yo dawg toss a dart", ["t"], () => {
+      this.toss = !this.toss;
+      this.tossed_at = this.elapsed_seconds;
+      this.starting_dart_position = Mat4.translation(0, -1, -5).times(
+        this.program_state.camera_transform
+      );
+    });
   }
 
   display(context, program_state) {
@@ -82,6 +92,12 @@ export class Carnival extends Scene {
       // Define the global camera and projection matrices, which are stored in program_state.
       program_state.set_camera(this.initial_camera_location);
     }
+
+    const elapsed_seconds = program_state.animation_time / 1000;
+    // TODO: This is a silly little hack for sharing state with the toss keyboard trigger
+    // Please only use as a prototype
+    this.elapsed_seconds = elapsed_seconds;
+    this.program_state = program_state;
 
     program_state.projection_transform = Mat4.perspective(
       Math.PI / 4,
@@ -115,7 +131,7 @@ export class Carnival extends Scene {
       this.materials.floor
     );
 
-    Booths(context, program_state, this.shapes, this.materials);
+    this.booth.draw(context, program_state);
     this.balloon.draw(
       context,
       program_state,
@@ -149,7 +165,11 @@ export class Carnival extends Scene {
     this.dart.draw(
       context,
       program_state,
-      Mat4.translation(-7, 3.2, 0.2),
+      this.toss
+        ? Mat4.translation(0, 0, -this.elapsed_seconds * 5).times(
+            this.starting_dart_position
+          )
+        : Mat4.translation(0, -1, -5).times(program_state.camera_transform),
       hex_color("#ff0000")
     );
   }
