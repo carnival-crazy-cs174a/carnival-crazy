@@ -2,6 +2,7 @@ import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
 import Booths from "./thingamabobs/booths.js";
 import Balloon from "./thingamabobs/balloon.js";
+//import Dart from "./thingamabobs/dart.js";
 
 const {
   Vector,
@@ -26,6 +27,7 @@ export class Carnival extends Scene {
     super();
 
     this.balloon = new Balloon();
+    //this.dart = new Dart();
 
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
@@ -138,11 +140,11 @@ export class Carnival extends Scene {
     );
 
     Booths(context, program_state, this.shapes, this.materials);
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(0, 5, 10),
-      hex_color("#ff0000")
-    );
+    this.balloon.draw(context, program_state, Mat4.translation(0, 3.2, .2), hex_color("#006400"));
+    this.balloon.draw(context, program_state, Mat4.translation(1.1, 3.2, .2), hex_color("#ffff00"));
+    this.balloon.draw(context, program_state, Mat4.translation(2.2, 3.2, .2), hex_color("#a020f0"));
+    this.balloon.draw(context, program_state, Mat4.translation(-1.1, 3.2, .2), hex_color("#ffa500"));
+    this.balloon.draw(context, program_state, Mat4.translation(-2.2, 3.2, .2), hex_color("#ff69b4"));
+    //this.dart.draw(context, program_state, Mat4.translation(-7, 3.2, .2), hex_color("#ff0000"));
   }
 }
