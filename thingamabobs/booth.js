@@ -28,7 +28,7 @@ export default class Booth {
   };
 
   materials = {
-    poles: new Material(new defs.Phong_Shader(), {
+    poles: new Material(this.shaders.phong, {
       ambient: 0.4,
       diffusivity: 0.6,
       color: hex_color("#FFFFFF"),
@@ -61,23 +61,32 @@ export default class Booth {
   draw(context, program_state) {
     // Arrow function is necessary for `this` to be interpreted correctly
     // See https://stackoverflow.com/a/36526580
-    const draw_poles = (context, program_state, pos_x, pos_z, stand_size) => {
-      const pole_length = 4;
+    const draw_poles = (
+      context,
+      program_state,
+      pos_x,
+      pos_z,
+      stand_size,
+      pole_scale
+    ) => {
+      const pole_height = pole_scale / 2 + 0.5;
       let pole1_transform = Mat4.identity() // right front pole
-        .times(Mat4.translation(pos_x, 2.5, pos_z)) // above ground
-        .times(Mat4.scale(0.1, pole_length, 0.1)) // skinny
+        .times(Mat4.translation(pos_x, pole_height, pos_z)) // above ground
+        .times(Mat4.scale(0.1, pole_scale, 0.1)) // skinny
         .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)); // to make it vertical
       let pole2_transform = Mat4.identity() // back left pole
-        .times(Mat4.translation(pos_x - stand_size, 2.5, pos_z - stand_size)) // above ground
-        .times(Mat4.scale(0.1, pole_length, 0.1)) // skinny
+        .times(
+          Mat4.translation(pos_x - stand_size, pole_height, pos_z - stand_size)
+        ) // above ground
+        .times(Mat4.scale(0.1, pole_scale, 0.1)) // skinny
         .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)); // to make it vertical
       let pole3_transform = Mat4.identity() // front left pole
-        .times(Mat4.translation(pos_x - stand_size, 2.5, pos_z)) // above ground
-        .times(Mat4.scale(0.1, pole_length, 0.1)) // skinny
+        .times(Mat4.translation(pos_x - stand_size, pole_height, pos_z)) // above ground
+        .times(Mat4.scale(0.1, pole_scale, 0.1)) // skinny
         .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)); // to make it vertical
       let pole4_transform = Mat4.identity() // back right pole
-        .times(Mat4.translation(pos_x, 2.5, pos_z - stand_size)) // above ground
-        .times(Mat4.scale(0.1, pole_length, 0.1)) // skinny
+        .times(Mat4.translation(pos_x, pole_height, pos_z - stand_size)) // above ground
+        .times(Mat4.scale(0.1, pole_scale, 0.1)) // skinny
         .times(Mat4.rotation(Math.PI / 2, 1, 0, 0)); // to make it vertical
 
       this.shapes.poles.draw(
@@ -105,7 +114,6 @@ export default class Booth {
         this.materials.poles
       );
     };
-
     const draw_booth = (
       context,
       program_state,
@@ -115,10 +123,9 @@ export default class Booth {
       roof_color,
       table_color
     ) => {
-      const blue = "#077DDF";
-      const yellow = hex_color("#F6D00");
+      const ref = 5;
       const roof_transform = Mat4.identity()
-        .times(Mat4.translation(booth_center_x, 5, booth_center_z)) // so it's not on the floor
+        .times(Mat4.translation(booth_center_x, ref, booth_center_z)) // so it's not on the floor
         .times(Mat4.scale(roof_size, 1, roof_size))
         .times(Mat4.rotation((3 * Math.PI) / 2, 1, 0, 0));
       if (roof_color == "red") {
@@ -148,7 +155,7 @@ export default class Booth {
       const pos_x = booth_center_x + scale;
       const pos_z = booth_center_z + scale;
       const pole_dist = roof_size + 1;
-      draw_poles(context, program_state, pos_x, pos_z, pole_dist);
+      draw_poles(context, program_state, pos_x, pos_z, pole_dist, ref - 1);
 
       const table_transform = Mat4.identity()
         .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
@@ -172,7 +179,7 @@ export default class Booth {
           context,
           program_state,
           table_transform,
-          this.materials.solid.blue
+          this.materials.blue
         );
       }
     };

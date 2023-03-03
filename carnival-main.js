@@ -60,8 +60,12 @@ export class Carnival extends Scene {
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
   }
-
-  make_control_panel() {}
+  make_control_panel() {
+    // maybe add a "play darts game" button for each game we implement that zooms you into view
+    // then once you're in the game the buttons available change? like if you're in the darts game then we make a set of controls appear specifically for that game
+    // then when you leave the game those controls disappear
+    // same for if we make it so you can ride the ferris wheel
+  }
 
   display(context, program_state) {
     // display():  Called once per frame of animation.
