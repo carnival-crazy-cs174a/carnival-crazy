@@ -131,6 +131,7 @@ export class Carnival extends Scene {
       this.materials.floor
     );
 
+    this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
     this.balloon.draw(
       context,
