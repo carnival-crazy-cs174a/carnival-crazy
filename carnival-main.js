@@ -2,6 +2,7 @@ import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
 import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
+import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 
 const {
   Vector,
@@ -57,6 +58,7 @@ export class Carnival extends Scene {
 
     this.balloon = new Balloon();
     this.booth = new Booth();
+    this.ferrisWheel = new FerrisWheel();
   }
 
   make_control_panel() {}
@@ -83,10 +85,10 @@ export class Carnival extends Scene {
     // The parameters of the Light are: position, color, size
     program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
 
-    const t = program_state.animation_time / 1000,
-      dt = program_state.animation_delta_time / 1000;
+    // const t = program_state.animation_time / 1000,
+    //   dt = program_state.animation_delta_time / 1000;
 
-    let model_transform = Mat4.identity();
+    // let model_transform = Mat4.identity();
     //=============================================== skybox =============================================
     let skybox_transform = Mat4.scale(60, 40, 60);
     this.shapes.skybox.draw(
@@ -103,13 +105,16 @@ export class Carnival extends Scene {
       floor_transform,
       this.materials.floor
     );
-
+    //=============================================== booth =============================================
     this.booth.draw(context, program_state);
+    //=============================================== balloon =============================================
     this.balloon.draw(
       context,
       program_state,
       Mat4.translation(0, 5, 10),
       hex_color("#ff0000")
     );
+    //============================================ ferris wheel ===========================================
+    this.ferrisWheel.draw(context, program_state);
   }
 }
