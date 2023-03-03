@@ -43,6 +43,7 @@ export default class Dart {
   }
 
   draw(context, program_state, location, color) {
+    location = location.times(Mat4.rotation(Math.PI, 1, 0, 0));
     const body_transform = location.times(this.body.default_transform);
     const neck_transform = location.times(this.neck.default_transform);
     const neck2_transform = location.times(this.neck2.default_transform);
