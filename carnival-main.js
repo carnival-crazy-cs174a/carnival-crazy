@@ -1,6 +1,8 @@
 import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
-import Booths from "./thingamabobs/booths.js";
+import Booth from "./thingamabobs/thingamabobs/booth.js";
+import Balloon from "./thingamabobs/balloon.js";
+import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Balloon from "./thingamabobs/balloon.js";
 import Dart from "./thingamabobs/darts.js";
 
@@ -37,44 +39,10 @@ export class Carnival extends Scene {
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
       floor: new defs.Cube(),
-      roof: new defs.Closed_Cone(15, 15),
-      poles: new defs.Rounded_Capped_Cylinder(500, 500),
-      table: new defs.Cube(),
     };
 
     // *** Materials
     this.materials = {
-      poles: new Material(new defs.Phong_Shader(), {
-        ambient: 0.4,
-        diffusivity: 0.6,
-        color: hex_color("#FFFFFF"),
-      }),
-      test2: new Material(new Gouraud_Shader(), {
-        ambient: 0.4,
-        diffusivity: 0.6,
-        color: hex_color("#992828"),
-      }),
-      red_ring_roof: new Material(new Ring_Shader(), {
-        ambient: 0,
-        diffusivity: 1,
-        specularity: 1,
-        color: hex_color("#FF0000"),
-      }),
-      red_table: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#CF0000"),
-      }),
-      blue: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#077DDF"),
-      }),
-      yellow: new Material(new defs.Phong_Shader(), {
-        ambient: 1,
-        diffusivity: 1,
-        color: hex_color("#F6D003"),
-      }),
       skybox: new Material(new defs.Phong_Shader(), {
         ambient: 1,
         diffusivity: 1,
@@ -92,9 +60,17 @@ export class Carnival extends Scene {
       vec3(0, 0, 0),
       vec3(0, 1, 0)
     );
-  }
 
-  make_control_panel() {}
+    this.balloon = new Balloon();
+    this.booth = new Booth();
+    this.ferrisWheel = new FerrisWheel();
+  }
+  make_control_panel() {
+    // maybe add a "play darts game" button for each game we implement that zooms you into view
+    // then once you're in the game the buttons available change? like if you're in the darts game then we make a set of controls appear specifically for that game
+    // then when you leave the game those controls disappear
+    // same for if we make it so you can ride the ferris wheel
+  }
 
   display(context, program_state) {
     // display():  Called once per frame of animation.
@@ -118,10 +94,10 @@ export class Carnival extends Scene {
     // The parameters of the Light are: position, color, size
     program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
 
-    const t = program_state.animation_time / 1000,
-      dt = program_state.animation_delta_time / 1000;
+    // const t = program_state.animation_time / 1000,
+    //   dt = program_state.animation_delta_time / 1000;
 
-    let model_transform = Mat4.identity();
+    // let model_transform = Mat4.identity();
     //=============================================== skybox =============================================
     let skybox_transform = Mat4.scale(60, 40, 60);
     this.shapes.skybox.draw(
@@ -140,11 +116,41 @@ export class Carnival extends Scene {
     );
 
     Booths(context, program_state, this.shapes, this.materials);
-    this.balloon.draw(context, program_state, Mat4.translation(0, 3.2, .2), hex_color("#006400"));
-    this.balloon.draw(context, program_state, Mat4.translation(1.1, 3.2, .2), hex_color("#ffff00"));
-    this.balloon.draw(context, program_state, Mat4.translation(2.2, 3.2, .2), hex_color("#a020f0"));
-    this.balloon.draw(context, program_state, Mat4.translation(-1.1, 3.2, .2), hex_color("#ffa500"));
-    this.balloon.draw(context, program_state, Mat4.translation(-2.2, 3.2, .2), hex_color("#ff69b4"));
-    this.dart.draw(context, program_state, Mat4.translation(-7, 3.2, .2), hex_color("#ff0000"));
+    this.balloon.draw(
+      context,
+      program_state,
+      Mat4.translation(0, 3.2, 0.2),
+      hex_color("#006400")
+    );
+    this.balloon.draw(
+      context,
+      program_state,
+      Mat4.translation(1.1, 3.2, 0.2),
+      hex_color("#ffff00")
+    );
+    this.balloon.draw(
+      context,
+      program_state,
+      Mat4.translation(2.2, 3.2, 0.2),
+      hex_color("#a020f0")
+    );
+    this.balloon.draw(
+      context,
+      program_state,
+      Mat4.translation(-1.1, 3.2, 0.2),
+      hex_color("#ffa500")
+    );
+    this.balloon.draw(
+      context,
+      program_state,
+      Mat4.translation(-2.2, 3.2, 0.2),
+      hex_color("#ff69b4")
+    );
+    this.dart.draw(
+      context,
+      program_state,
+      Mat4.translation(-7, 3.2, 0.2),
+      hex_color("#ff0000")
+    );
   }
 }
