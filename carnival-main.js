@@ -55,8 +55,8 @@ export class Carnival extends Scene {
     };
 
     this.initial_camera_location = Mat4.look_at(
-      vec3(0, 10, 50),
-      vec3(0, 0, 0),
+      vec3(0, 3, 25),
+      vec3(0, 3, 0),
       vec3(0, 1, 0)
     );
 
@@ -172,9 +172,11 @@ export class Carnival extends Scene {
         context,
         program_state,
         this.toss
-          ? Mat4.translation(0, 0, -this.elapsed_seconds * 5).times(
-              this.starting_dart_position
-            )
+          ? Mat4.translation(
+              0,
+              0,
+              -(this.elapsed_seconds - this.tossed_at) * 5
+            ).times(this.starting_dart_position)
           : Mat4.translation(0, -1, -5).times(program_state.camera_transform),
         hex_color("#ff0000")
       );
