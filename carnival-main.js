@@ -2,7 +2,7 @@ import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
 import Booths from "./thingamabobs/booths.js";
 import Balloon from "./thingamabobs/balloon.js";
-//import Dart from "./thingamabobs/dart.js";
+import Dart from "./thingamabobs/darts.js";
 
 const {
   Vector,
@@ -27,7 +27,7 @@ export class Carnival extends Scene {
     super();
 
     this.balloon = new Balloon();
-    //this.dart = new Dart();
+    this.dart = new Dart();
 
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
@@ -145,6 +145,6 @@ export class Carnival extends Scene {
     this.balloon.draw(context, program_state, Mat4.translation(2.2, 3.2, .2), hex_color("#a020f0"));
     this.balloon.draw(context, program_state, Mat4.translation(-1.1, 3.2, .2), hex_color("#ffa500"));
     this.balloon.draw(context, program_state, Mat4.translation(-2.2, 3.2, .2), hex_color("#ff69b4"));
-    //this.dart.draw(context, program_state, Mat4.translation(-7, 3.2, .2), hex_color("#ff0000"));
+    this.dart.draw(context, program_state, Mat4.translation(-7, 3.2, .2), hex_color("#ff0000"));
   }
 }
