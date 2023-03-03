@@ -1,9 +1,8 @@
 import { defs, tiny } from "./examples/common.js";
 import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
-import Booth from "./thingamabobs/thingamabobs/booth.js";
+import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
-import Balloon from "./thingamabobs/balloon.js";
 import Dart from "./thingamabobs/darts.js";
 
 const {
@@ -115,7 +114,7 @@ export class Carnival extends Scene {
       this.materials.floor
     );
 
-    Booths(context, program_state, this.shapes, this.materials);
+    this.booth.draw(context, program_state);
     this.balloon.draw(
       context,
       program_state,
