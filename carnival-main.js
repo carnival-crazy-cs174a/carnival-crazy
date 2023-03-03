@@ -55,8 +55,8 @@ export class Carnival extends Scene {
     };
 
     this.initial_camera_location = Mat4.look_at(
-      vec3(0, 3, 10),
-      vec3(0, 3, 0),
+      vec3(0, 10, 50),
+      vec3(0, 0, 0),
       vec3(0, 1, 0)
     );
 
@@ -66,6 +66,7 @@ export class Carnival extends Scene {
 
     this.toss = false;
     this.elapsed_seconds = 0;
+    this.visible_dart = false;
   }
 
   make_control_panel() {
@@ -73,12 +74,15 @@ export class Carnival extends Scene {
     // then once you're in the game the buttons available change? like if you're in the darts game then we make a set of controls appear specifically for that game
     // then when you leave the game those controls disappear
     // same for if we make it so you can ride the ferris wheel
-    this.key_triggered_button("Yo dawg toss a dart", ["t"], () => {
+    this.key_triggered_button("Throw the dart", ["t"], () => {
       this.toss = !this.toss;
       this.tossed_at = this.elapsed_seconds;
       this.starting_dart_position = Mat4.translation(0, -1, -5).times(
         this.program_state.camera_transform
       );
+    });
+    this.key_triggered_button("Play darts", ["x"], () => {
+      this.visible_dart = !this.visible_dart;
     });
   }
 
@@ -163,15 +167,17 @@ export class Carnival extends Scene {
       Mat4.translation(-2.2, 3.2, 0.2),
       hex_color("#ff69b4")
     );
-    this.dart.draw(
-      context,
-      program_state,
-      this.toss
-        ? Mat4.translation(0, 0, -this.elapsed_seconds * 5).times(
-            this.starting_dart_position
-          )
-        : Mat4.translation(0, -1, -5).times(program_state.camera_transform),
-      hex_color("#ff0000")
-    );
+    if (this.visible_dart) {
+      this.dart.draw(
+        context,
+        program_state,
+        this.toss
+          ? Mat4.translation(0, 0, -this.elapsed_seconds * 5).times(
+              this.starting_dart_position
+            )
+          : Mat4.translation(0, -1, -5).times(program_state.camera_transform),
+        hex_color("#ff0000")
+      );
+    }
   }
 }

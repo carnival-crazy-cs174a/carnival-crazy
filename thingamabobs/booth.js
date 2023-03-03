@@ -54,6 +54,11 @@ export default class Booth {
       diffusivity: 1,
       color: hex_color("#F6D003"),
     }),
+    white: new Material(this.shaders.phong, {
+      ambient: 1,
+      diffusivity: 1,
+      color: hex_color("#CFBFAF"),
+    }),
   };
 
   constructor() {}
@@ -149,6 +154,13 @@ export default class Booth {
           roof_transform,
           this.materials.yellow
         );
+      } else if (roof_color == "white") {
+        this.shapes.roof.draw(
+          context,
+          program_state,
+          roof_transform,
+          this.materials.white
+        );
       }
 
       const scale = roof_size / 2 + 0.5;
@@ -157,9 +169,23 @@ export default class Booth {
       const pole_dist = roof_size + 1;
       draw_poles(context, program_state, pos_x, pos_z, pole_dist, ref - 1);
 
-      const table_transform = Mat4.identity()
-        .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
-        .times(Mat4.scale(scale, 1, 1));
+      let table_transform = Mat4.identity();
+      if (table_color !== "yellow") {
+        table_transform = table_transform
+          .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
+          .times(Mat4.rotation(Math.PI / 2, 0, 1, 0))
+          .times(Mat4.scale(scale, 1, 1));
+      } else {
+        table_transform = table_transform
+          .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
+          .times(Mat4.scale(scale, 1, 1));
+      }
+
+      // if (table_color !== "yellow") {
+      //   table_transform = table_transform.times(
+      //     Mat4.rotation(Math.PI / 4, 0, 0, 1)
+      //   );
+      // }
       if (table_color == "red") {
         this.shapes.table.draw(
           context,
@@ -181,13 +207,20 @@ export default class Booth {
           table_transform,
           this.materials.blue
         );
+      } else if (table_color == "white") {
+        this.shapes.table.draw(
+          context,
+          program_state,
+          table_transform,
+          this.materials.white
+        );
       }
     };
 
     if (this.shapes != null && this.materials != null) {
-      let roof_size = 7; // how big should the booth be
+      let roof_size = 5; // how big should the booth be
       let booth_center_x = 10; // x coordinate of booth center
-      let booth_center_z = 15; // z coordinate of booth center
+      let booth_center_z = 5; // z coordinate of booth center
       let roof_color = "red";
       let table_color = "red";
       draw_booth(
@@ -204,6 +237,76 @@ export default class Booth {
       booth_center_z = 0;
       roof_color = "blue";
       table_color = "yellow";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 3;
+      booth_center_x = -10;
+      booth_center_z = 5;
+      roof_color = "yellow";
+      table_color = "white";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 7;
+      booth_center_x = -10;
+      booth_center_z = 17;
+      roof_color = "white";
+      table_color = "blue";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 4;
+      booth_center_x = -10;
+      booth_center_z = 30;
+      roof_color = "red";
+      table_color = "white";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 4;
+      booth_center_x = 10;
+      booth_center_z = 15;
+      roof_color = "yellow";
+      table_color = "white";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 6;
+      booth_center_x = 10;
+      booth_center_z = 25;
+      roof_color = "blue";
+      table_color = "red";
       draw_booth(
         context,
         program_state,
