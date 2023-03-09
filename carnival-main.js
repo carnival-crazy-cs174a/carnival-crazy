@@ -4,6 +4,7 @@ import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Dart from "./thingamabobs/darts.js";
+import milkCarton from "./thingamabobs/milkCarton.js";
 
 const {
   Vector,
@@ -29,6 +30,7 @@ export class Carnival extends Scene {
 
     this.balloon = new Balloon();
     this.dart = new Dart();
+    this.milkCarton = new milkCarton();
 
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
@@ -181,5 +183,25 @@ export class Carnival extends Scene {
         hex_color("#ff0000")
       );
     }
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 5), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 4.8), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 4.6), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 4.9), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 4.7), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.4, 4.8), hex_color("#af69b4"));
+
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 3.4), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 3.2), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 3), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 3.3), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 3.1), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.4, 3.2), hex_color("#af69b4"));
+
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 6.6), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 6.4), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 6.2), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 6.5), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.05, 6.3), hex_color("#af69b4"));
+    this.milkCarton.draw(context, program_state, Mat4.translation(10, 3.4, 6.4), hex_color("#af69b4"));
   }
 }

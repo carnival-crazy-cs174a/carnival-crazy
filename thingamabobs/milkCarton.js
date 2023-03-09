@@ -22,13 +22,13 @@ export default class milkCarton {
 
     shapes = {
         body: new defs.Subdivision_Sphere(5),
-        neck: new defs.Rounded_Closed_Cone(50, 50),
+        neck: new defs.Rounded_Closed_Cone(30, 50),
     };
 
     default_transforms = {
-        body: Mat4.scale(0.15, 0.3, 0.25),
-        neck: Mat4.scale(0.15, 0.2, 0.2)
-            .times(Mat4.translation(0, 1.7, 0))
+        body: Mat4.scale(0.075, 0.19, 0.075),
+        neck: Mat4.scale(0.07, 0.1, 0.07)
+            .times(Mat4.translation(0, 1.6, 0))
             .times(Mat4.rotation((3 * Math.PI) / 2, 1, 0, 0)),
     };
 
