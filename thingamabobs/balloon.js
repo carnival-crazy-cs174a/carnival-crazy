@@ -76,14 +76,14 @@ export default class Balloon {
     /**
      * Draw bounding volume for debugging
      */
-    const size = vec3(1 + this.leeway, 1 + this.leeway, 1 + this.leeway);
-    this.bounding_volume.draw(
-      context,
-      program_state,
-      this.location_and_transform.times(Mat4.scale(...size)),
-      this.wireframe_color,
-      "LINE_STRIP"
-    );
+    // const size = vec3(1 + this.leeway, 1 + this.leeway, 1 + this.leeway);
+    // this.bounding_volume.draw(
+    //   context,
+    //   program_state,
+    //   this.location_and_transform.times(Mat4.scale(...size)),
+    //   this.wireframe_color,
+    //   "LINE_STRIP"
+    // );
   }
 
   collides_with(other) {
