@@ -5,6 +5,7 @@ import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Dart from "./thingamabobs/darts.js";
 import milkCarton from "./thingamabobs/milkCarton.js";
+import Duck from "./thingamabobs/duck.js";
 
 const {
   Vector,
@@ -31,6 +32,7 @@ export class Carnival extends Scene {
     this.balloon = new Balloon();
     this.dart = new Dart();
     this.milkCarton = new milkCarton();
+    this.duck = new Duck();
 
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
@@ -183,6 +185,12 @@ export class Carnival extends Scene {
         hex_color("#ff0000")
       );
     }
+    this.duck.draw(context, program_state, Mat4.translation(-10, 3.1, 20), hex_color("#af69b4"));
+    this.duck.draw(context, program_state, Mat4.translation(-10, 3.1, 18), hex_color("#af69b4"));
+    this.duck.draw(context, program_state, Mat4.translation(-10, 3.1, 16), hex_color("#af69b4"));
+    this.duck.draw(context, program_state, Mat4.translation(-10, 3.1, 14), hex_color("#af69b4"));
+
+
     this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 5), hex_color("#af69b4"));
     this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 4.8), hex_color("#af69b4"));
     this.milkCarton.draw(context, program_state, Mat4.translation(10, 2.7, 4.6), hex_color("#af69b4"));
