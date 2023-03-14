@@ -3,7 +3,7 @@ import { Gouraud_Shader, Ring_Shader } from "./shaders.js";
 import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
-import Dart from "./thingamabobs/darts.js";
+import Dart from "./thingamabobs/dart.js";
 
 const {
   Vector,
@@ -26,9 +26,6 @@ export class Carnival extends Scene {
   constructor() {
     // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
     super();
-
-    this.balloon = new Balloon();
-    this.dart = new Dart();
 
     // At the beginning of our program, load one of each of these shape definitions onto the GPU.
     this.shapes = {
@@ -60,9 +57,50 @@ export class Carnival extends Scene {
       vec3(0, 1, 0)
     );
 
-    this.balloon = new Balloon();
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
+
+    this.balloons = [
+      {
+        popped: false,
+        balloon: new Balloon(
+          Mat4.translation(0, 3.2, 0.2),
+          hex_color("#006400")
+        ),
+      },
+      {
+        popped: false,
+        balloon: new Balloon(
+          Mat4.translation(1.1, 3.2, 0.2),
+          hex_color("#ffff00")
+        ),
+      },
+      {
+        popped: false,
+        balloon: new Balloon(
+          Mat4.translation(2.2, 3.2, 0.2),
+          hex_color("#a020f0")
+        ),
+      },
+      {
+        popped: false,
+        balloon: new Balloon(
+          Mat4.translation(-1.1, 3.2, 0.2),
+          hex_color("#ffa500")
+        ),
+      },
+      {
+        popped: false,
+        balloon: new Balloon(
+          Mat4.translation(-2.2, 3.2, 0.2),
+          hex_color("#ff69b4")
+        ),
+      },
+    ];
+    this.dart = new Dart(
+      Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+      hex_color("#ff0000")
+    );
 
     this.toss = false;
     this.elapsed_seconds = 0;
@@ -137,49 +175,31 @@ export class Carnival extends Scene {
 
     this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(0, 3.2, 0.2),
-      hex_color("#006400")
-    );
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(1.1, 3.2, 0.2),
-      hex_color("#ffff00")
-    );
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(2.2, 3.2, 0.2),
-      hex_color("#a020f0")
-    );
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(-1.1, 3.2, 0.2),
-      hex_color("#ffa500")
-    );
-    this.balloon.draw(
-      context,
-      program_state,
-      Mat4.translation(-2.2, 3.2, 0.2),
-      hex_color("#ff69b4")
-    );
-    if (this.visible_dart) {
-      this.dart.draw(
-        context,
-        program_state,
-        this.toss
-          ? Mat4.translation(
-              0,
-              0,
-              -(this.elapsed_seconds - this.tossed_at) * 5
-            ).times(this.starting_dart_position)
-          : Mat4.translation(0, -1, -5).times(program_state.camera_transform),
-        hex_color("#ff0000")
-      );
+
+    for (const balloonState of this.balloons) {
+      if (balloonState.balloon.collides_with(this.dart)) {
+        balloonState.popped = true;
+      } else if (!balloonState.popped) {
+        balloonState.balloon.draw(context, program_state);
+      }
     }
+
+    const dart_score = this.balloons.reduce(
+      (accumulator, current) => accumulator + current.popped,
+      0
+    );
+    console.log(`Dart score: ${dart_score}`);
+
+    this.dart.draw(
+      context,
+      program_state,
+      this.toss
+        ? Mat4.translation(
+            0,
+            0,
+            -(this.elapsed_seconds - this.tossed_at) * 5
+          ).times(this.starting_dart_position)
+        : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
+    );
   }
 }
