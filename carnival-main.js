@@ -68,6 +68,7 @@ export class Carnival extends Scene {
         diffusivity: 1,
         specularity: 1,
         color: hex_color("#FFE87C"),
+      }),
       floor2: new Material(new Textured_Phong(), {
         color: hex_color("#000000"),
         ambient: 1,
