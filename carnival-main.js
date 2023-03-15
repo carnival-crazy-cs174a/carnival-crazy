@@ -317,7 +317,6 @@ export class Carnival extends Scene {
     const init_height = 0;
     // const velocity = 4;
     const dt = program_state.animation_delta_time / 1000;
-    console.log("this.throw_bb: " + this.throw_bb);
 
     // if (this.throw_bb) {
     //   this.basketball.draw(
@@ -361,7 +360,6 @@ export class Carnival extends Scene {
       ) {
         balloonState.popped = true;
         current_dart.visible = false;
-        console.log("CURRENT COLLIDED: " + this.dart_num);
       } else if (!balloonState.popped) {
         balloonState.balloon.draw(context, program_state);
       }
@@ -373,7 +371,6 @@ export class Carnival extends Scene {
       0
     );
     console.log(`Dart score: ${dart_score}`);
-    console.log("number", this.dart_num, "   visible", current_dart.visible);
     if (current_dart.visible) {
       current_dart.dart.draw(
         context,
