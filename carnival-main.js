@@ -22,9 +22,18 @@ const {
   Shape,
   Material,
   Scene,
+  Texture,
 } = tiny;
 
-//put lightining next to the balloons so you can dim the light in the middle
+const { Cube, Textured_Phong } = defs;
+
+class Scaled_Cube extends Cube {
+  constructor() {
+    super();
+    for (let i = 0; i < this.arrays.texture_coord.length; i++)
+      this.arrays.texture_coord[i].scale_by(5);
+  }
+}
 
 export class Carnival extends Scene {
   constructor() {
@@ -38,7 +47,7 @@ export class Carnival extends Scene {
       sphere: new defs.Subdivision_Sphere(8),
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
-      floor: new defs.Cube(),
+      floor: new Scaled_Cube(),
     };
 
     // *** Materials
@@ -59,7 +68,13 @@ export class Carnival extends Scene {
         diffusivity: 1,
         specularity: 1,
         color: hex_color("#FFE87C"),
-      })
+      floor2: new Material(new Textured_Phong(), {
+        color: hex_color("#000000"),
+        ambient: 1,
+        diffusivity: 0.1,
+        specularity: 0.1,
+        texture: new Texture("assets/grass.png", "NEAREST"),
+      }),
     };
 
     this.initial_camera_location = Mat4.look_at(
@@ -71,7 +86,7 @@ export class Carnival extends Scene {
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
     this.scoreboard = new ScoreBoard(Mat4.translation(-10, 3, 0));
-   // this.basketball = new Basketball();
+    // this.basketball = new Basketball();
 
     this.balloons = [
       {
@@ -147,7 +162,7 @@ export class Carnival extends Scene {
         visible: false,
       },
     ];
-    this.dart_num = 0;    
+    this.dart_num = 0;
     this.basketball = new Basketball(
       Mat4.translation(0, -1, -5).times(this.initial_camera_location),
       hex_color("#ff0000")
@@ -170,8 +185,7 @@ export class Carnival extends Scene {
       //   this.first_dart = false;
       // }  // I think we need this if statement here (without breaking it tho)
       // We need some sort of thing to initialize position of each dart or something
-      if (this.dart_num == 4)
-      {
+      if (this.dart_num == 4) {
         this.dart_num = 0;
         this.first_dart = true;
       }
@@ -191,7 +205,6 @@ export class Carnival extends Scene {
       if (this.dart_num > 4) {
         this.dart_num = 0;
       }
-      console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
     });
     this.key_triggered_button("Throw the basketball", ["b"], () => {
@@ -274,27 +287,34 @@ export class Carnival extends Scene {
       skybox_transform,
       this.materials.skybox
     );
-    let sun_transform = Mat4.translation(45, 36, -40).times(Mat4.scale(4, 4, 4));
-    this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
-    
+    let sun_transform = Mat4.translation(45, 36, -40).times(
+      Mat4.scale(4, 4, 4)
+    );
+    this.shapes.sphere.draw(
+      context,
+      program_state,
+      sun_transform,
+      this.materials.sun
+    );
+
     //=============================================== floor =============================================
     let floor_transform = Mat4.scale(60, 0.5, 60);
     this.shapes.floor.draw(
       context,
       program_state,
       floor_transform,
-      this.materials.floor
+      this.materials.floor2
     );
-    
+
     this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
 
-//    this.basketball.draw(context, program_state);
+    //    this.basketball.draw(context, program_state);
 
     //=============================================== basketball =============================================
     const gravity = -1.9;
     const init_height = 0;
-   // const velocity = 4;
+    // const velocity = 4;
     const dt = program_state.animation_delta_time / 1000;
     console.log("this.throw_bb: " + this.throw_bb);
 
@@ -305,32 +325,42 @@ export class Carnival extends Scene {
     //   );
     // }
     // ball_transform = (Mat4.translation(this.time_bb, ball_y, 10)).times(Mat4.scale(0.3, 0.3, 0.3)).times(Mat4.rotation(this.time_bb, 0, 0, 1)).times(ball_transform);    // T * S * R * I
-    if (this.throw_bb)
-    {
+    if (this.throw_bb) {
       this.dt_bb = this.dt_bb + dt;
     }
-    let ball_y = init_height + this.velocity*this.dt_bb + 0.5*gravity*this.dt_bb*this.dt_bb;
+    let ball_y =
+      init_height +
+      this.velocity * this.dt_bb +
+      0.5 * gravity * this.dt_bb * this.dt_bb;
     if (this.visible_bb) {
       this.basketball.draw(
-          context,
-          program_state,
-          this.throw_bb
-            ? Mat4.translation(
-                0,
-                ball_y,
-                -(this.elapsed_seconds - this.bb_tossed_at) * 6
-              ).times(this.starting_bb_position)
-            : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
-        );
+        context,
+        program_state,
+        this.throw_bb
+          ? Mat4.translation(
+              0,
+              ball_y,
+              -(this.elapsed_seconds - this.bb_tossed_at) * 6
+            ).times(this.starting_bb_position)
+          : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
+      );
     }
 
     //=============================================== balloon =============================================
 
     const current_dart = this.darts[this.dart_num];
     for (const balloonState of this.balloons) {
-      if (balloonState.balloon.collides_with(current_dart.dart)) {
+      if (balloonState.popped) {
+        // don't check collisions if balloon is already popped
+        continue;
+      }
+      if (
+        !balloonState.popped &&
+        balloonState.balloon.collides_with(current_dart.dart)
+      ) {
         balloonState.popped = true;
         current_dart.visible = false;
+        console.log("CURRENT COLLIDED: " + this.dart_num);
       } else if (!balloonState.popped) {
         balloonState.balloon.draw(context, program_state);
       }
@@ -342,7 +372,7 @@ export class Carnival extends Scene {
       0
     );
     console.log(`Dart score: ${dart_score}`);
-
+    console.log("number", this.dart_num, "   visible", current_dart.visible);
     if (current_dart.visible) {
       current_dart.dart.draw(
         context,
