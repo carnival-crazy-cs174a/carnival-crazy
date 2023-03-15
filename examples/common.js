@@ -10,7 +10,7 @@ Object.assign(tiny, widgets);
 
 const defs = {};
 
-export {tiny, defs};
+export {tiny, defs, Texture};
 
 const Triangle = defs.Triangle =
     class Triangle extends Shape {
