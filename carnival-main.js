@@ -4,6 +4,7 @@ import Booth from "./thingamabobs/booth.js";
 import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Dart from "./thingamabobs/dart.js";
+import ScoreBoard from "./thingamabobs/scoreboard.js";
 
 const {
   Vector,
@@ -62,6 +63,7 @@ export class Carnival extends Scene {
 
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
+    this.scoreboard = new ScoreBoard(Mat4.translation(-10, 3, 0));
 
     this.balloons = [
       {
@@ -242,5 +244,7 @@ export class Carnival extends Scene {
           : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
       );
     }
+
+    this.scoreboard.draw(context, program_state, dart_score);
   }
 }
