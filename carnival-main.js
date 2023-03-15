@@ -179,6 +179,18 @@ export class Carnival extends Scene {
   }
 
   make_control_panel() {
+    this.key_triggered_button("Play darts", ["x"], () => {
+      this.toss = false;
+      if (!this.first_dart) {
+        this.dart_num += 1;
+      } else {
+        this.first_dart = false;
+      }
+      if (this.dart_num > 4) {
+        this.dart_num = 0;
+      }
+      this.darts[this.dart_num].visible = true;
+    });
     this.key_triggered_button("Throw the dart", ["t"], () => {
       // if (!this.first_dart) {
       //   this.dart_num += 1;
@@ -196,39 +208,10 @@ export class Carnival extends Scene {
         this.program_state.camera_transform
       );
     });
-    this.key_triggered_button("Play darts", ["x"], () => {
-      this.toss = false;
-      if (!this.first_dart) {
-        this.dart_num += 1;
-      } else {
-        this.first_dart = false;
-      }
-      if (this.dart_num > 4) {
-        this.dart_num = 0;
-      }
-      this.darts[this.dart_num].visible = true;
-    });
-    this.key_triggered_button("Throw the basketball", ["b"], () => {
-      this.throw_bb = !this.throw_bb;
-      this.dt_bb = 0;
-      this.bb_tossed_at = this.elapsed_seconds;
-      this.starting_bb_position = Mat4.translation(0, -1, -5).times(
-        this.program_state.camera_transform
-      );
-      // this.starting_bb_position = Mat4.translation(0, -1, -5).times(
-      //   this.program_state.camera_transform
-      // );
-    });
     this.key_triggered_button("Play basketball", ["y"], () => {
       this.visible_bb = true;
       this.dt_bb = 0;
       this.throw_bb = false;
-    });
-    this.key_triggered_button("More powerful basketball throw", ["m"], () => {
-      this.velocity = this.velocity + 0.5;
-    });
-    this.key_triggered_button("Less powerful basketball throw", ["l"], () => {
-      this.velocity = this.velocity - 0.5;
     });
     this.key_triggered_button("Throw the basketball", ["b"], () => {
       this.throw_bb = !this.throw_bb;
