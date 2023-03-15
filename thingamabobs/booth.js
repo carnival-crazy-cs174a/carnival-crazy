@@ -16,15 +16,23 @@ const {
   Shape,
   Material,
   Scene,
+  Texture,
 } = tiny;
 
+const { Cube, Textured_Phong } = defs;
+
 export default class Booth {
-  shaders = { phong: new defs.Phong_Shader(), ring: new Ring_Shader() };
+  shaders = {
+    phong: new defs.Phong_Shader(),
+    ring: new Ring_Shader(),
+    image: new Textured_Phong(),
+  };
 
   shapes = {
     roof: new defs.Closed_Cone(15, 15),
     poles: new defs.Rounded_Capped_Cylinder(500, 500),
-    table: new defs.Cube(),
+    table: new Cube(),
+    bucket: new defs.Cylindrical_Tube(100, 100),
   };
 
   materials = {
@@ -44,6 +52,13 @@ export default class Booth {
       diffusivity: 1,
       color: hex_color("#CF0000"),
     }),
+    red_stripes: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/stripes.png", "NEAREST"),
+    }),
     blue: new Material(this.shaders.phong, {
       ambient: 1,
       diffusivity: 1,
@@ -58,6 +73,41 @@ export default class Booth {
       ambient: 1,
       diffusivity: 1,
       color: hex_color("#CFBFAF"),
+    }),
+    darts_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/balloondarts.png"),
+    }),
+    ring_toss_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/ringtoss.png"),
+    }),
+    ducks_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/ducks.png"),
+    }),
+    food_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/food.png"),
+    }),
+    bucket_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/buckets.png"),
     }),
   };
 
@@ -128,7 +178,7 @@ export default class Booth {
       roof_color,
       table_color
     ) => {
-      const ref = 5;
+      const ref = 6;
       const roof_transform = Mat4.identity()
         .times(Mat4.translation(booth_center_x, ref, booth_center_z)) // so it's not on the floor
         .times(Mat4.scale(roof_size, 1, roof_size))
@@ -170,7 +220,7 @@ export default class Booth {
       draw_poles(context, program_state, pos_x, pos_z, pole_dist, ref - 1);
 
       let table_transform = Mat4.identity();
-      if (table_color !== "yellow") {
+      if (table_color !== "darts") {
         table_transform = table_transform
           .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
           .times(Mat4.rotation(Math.PI / 2, 0, 1, 0))
@@ -181,48 +231,50 @@ export default class Booth {
           .times(Mat4.scale(scale, 1, 1));
       }
 
-      // if (table_color !== "yellow") {
-      //   table_transform = table_transform.times(
-      //     Mat4.rotation(Math.PI / 4, 0, 0, 1)
-      //   );
-      // }
-      if (table_color == "red") {
+      if (table_color == "plain") {
         this.shapes.table.draw(
           context,
           program_state,
           table_transform,
-          this.materials.red_table
+          this.materials.red_stripes
         );
-      } else if (table_color == "yellow") {
+      } else if (table_color == "darts") {
         this.shapes.table.draw(
           context,
           program_state,
           table_transform,
-          this.materials.yellow
+          this.materials.darts_table
         );
-      } else if (table_color == "blue") {
+      } else if (table_color == "ringtoss") {
         this.shapes.table.draw(
           context,
           program_state,
           table_transform,
-          this.materials.blue
+          this.materials.ring_toss_table
         );
-      } else if (table_color == "white") {
+      } else if (table_color == "ducks") {
         this.shapes.table.draw(
           context,
           program_state,
           table_transform,
-          this.materials.white
+          this.materials.ducks_table
+        );
+      } else if (table_color == "food") {
+        this.shapes.table.draw(
+          context,
+          program_state,
+          table_transform,
+          this.materials.food_table
         );
       }
     };
 
     if (this.shapes != null && this.materials != null) {
-      let roof_size = 5; // how big should the booth be
-      let booth_center_x = 10; // x coordinate of booth center
+      let roof_size = 4; // how big should the booth be
+      let booth_center_x = 15; // x coordinate of booth center
       let booth_center_z = 5; // z coordinate of booth center
       let roof_color = "red";
-      let table_color = "red";
+      let table_color = "plain";
       draw_booth(
         context,
         program_state,
@@ -233,10 +285,61 @@ export default class Booth {
         table_color
       );
       roof_size = 5;
-      booth_center_x = 0;
+      booth_center_x = -5;
       booth_center_z = 0;
       roof_color = "blue";
-      table_color = "yellow";
+      table_color = "darts";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+
+      booth_center_x = 5;
+      booth_center_z = 0;
+      let table_transform = Mat4.identity()
+        .times(Mat4.translation(booth_center_x, 1.5, booth_center_z))
+        .times(Mat4.scale(2, 1, 1));
+      this.shapes.table.draw(
+        context,
+        program_state,
+        table_transform,
+        this.materials.bucket_table
+      );
+
+      table_transform = table_transform
+        .times(Mat4.translation(0, 1.5, 0))
+        .times(Mat4.scale(0.75, 1, 1))
+        .times(Mat4.rotation(Math.PI / 2, 1, 0, 0));
+      this.shapes.bucket.draw(
+        context,
+        program_state,
+        table_transform,
+        this.materials.yellow
+      );
+      roof_size = 3;
+      booth_center_x = -15;
+      booth_center_z = 5;
+      roof_color = "yellow";
+      table_color = "plain";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 4;
+      booth_center_x = -15;
+      booth_center_z = 13;
+      roof_color = "white";
+      table_color = "ducks";
       draw_booth(
         context,
         program_state,
@@ -247,24 +350,10 @@ export default class Booth {
         table_color
       );
       roof_size = 3;
-      booth_center_x = -10;
-      booth_center_z = 5;
-      roof_color = "yellow";
-      table_color = "white";
-      draw_booth(
-        context,
-        program_state,
-        booth_center_x,
-        booth_center_z,
-        roof_size,
-        roof_color,
-        table_color
-      );
-      roof_size = 7;
-      booth_center_x = -10;
-      booth_center_z = 17;
-      roof_color = "white";
-      table_color = "blue";
+      booth_center_x = -15;
+      booth_center_z = 21;
+      roof_color = "blue";
+      table_color = "plain";
       draw_booth(
         context,
         program_state,
@@ -275,10 +364,10 @@ export default class Booth {
         table_color
       );
       roof_size = 4;
-      booth_center_x = -10;
+      booth_center_x = -15;
       booth_center_z = 30;
       roof_color = "red";
-      table_color = "white";
+      table_color = "food";
       draw_booth(
         context,
         program_state,
@@ -289,10 +378,10 @@ export default class Booth {
         table_color
       );
       roof_size = 4;
-      booth_center_x = 10;
+      booth_center_x = 15;
       booth_center_z = 15;
       roof_color = "yellow";
-      table_color = "white";
+      table_color = "ringtoss";
       draw_booth(
         context,
         program_state,
@@ -302,11 +391,25 @@ export default class Booth {
         roof_color,
         table_color
       );
-      roof_size = 6;
-      booth_center_x = 10;
-      booth_center_z = 25;
+      roof_size = 3;
+      booth_center_x = 15;
+      booth_center_z = 23;
       roof_color = "blue";
-      table_color = "red";
+      table_color = "plain";
+      draw_booth(
+        context,
+        program_state,
+        booth_center_x,
+        booth_center_z,
+        roof_size,
+        roof_color,
+        table_color
+      );
+      roof_size = 5;
+      booth_center_x = 15;
+      booth_center_z = 32.5;
+      roof_color = "white";
+      table_color = "plain";
       draw_booth(
         context,
         program_state,
