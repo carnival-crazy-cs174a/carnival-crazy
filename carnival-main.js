@@ -180,28 +180,15 @@ export class Carnival extends Scene {
       );
     });
     this.key_triggered_button("Play darts", ["x"], () => {
+      this.toss = false;
       if (!this.first_dart) {
         this.dart_num += 1;
       } else {
         this.first_dart = false;
       }
-      if (this.dart_num == 4) // so that we can cycle thru diff darts
-      {
+      if (this.dart_num > 4) {
         this.dart_num = 0;
-        this.first_dart = true;
       }
-      if (!this.first_dart) {
-        this.dart_num += 1;   // ?? don't u want to increment even if it is ur first dart tho???
-      } else {
-        this.first_dart = false;
-      }
-      console.log(this.dart_num);
-      this.darts[this.dart_num].visible = true;
-    });
-    this.key_triggered_button("Play basketball", ["y"], () => {
-      this.visible_bb = true;
-      this.dt_bb = 0;
-      this.throw_bb = false;
       console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
     });
@@ -300,7 +287,6 @@ export class Carnival extends Scene {
     this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
 
-    const current_dart = this.darts[this.dart_num];
 //    this.basketball.draw(context, program_state);
 
     //=============================================== basketball =============================================
