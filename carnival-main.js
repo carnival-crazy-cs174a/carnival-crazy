@@ -34,7 +34,7 @@ export class Carnival extends Scene {
     this.shapes = {
       torus: new defs.Torus(15, 15),
       torus2: new defs.Torus(3, 15),
-      sphere: new defs.Subdivision_Sphere(4),
+      sphere: new defs.Subdivision_Sphere(8),
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
       floor: new defs.Cube(),
@@ -53,6 +53,12 @@ export class Carnival extends Scene {
         specularity: 0,
         color: hex_color("#7EC850"),
       }),
+      sun: new Material(new defs.Phong_Shader(), {
+        ambient: 1,
+        diffusivity: 1,
+        specularity: 1,
+        color: hex_color("#FFE87C"),
+      })
     };
 
     this.initial_camera_location = Mat4.look_at(
@@ -139,7 +145,8 @@ export class Carnival extends Scene {
         visible: false,
       },
     ];
-    this.dart_num = 0;    this.basketball = new Basketball(
+    this.dart_num = 0;    
+    this.basketball = new Basketball(
       Mat4.translation(0, -1, -5).times(this.initial_camera_location),
       hex_color("#ff0000")
     );
@@ -155,6 +162,17 @@ export class Carnival extends Scene {
 
   make_control_panel() {
     this.key_triggered_button("Throw the dart", ["t"], () => {
+      // if (!this.first_dart) {
+      //   this.dart_num += 1;
+      // } else {
+      //   this.first_dart = false;
+      // }  // I think we need this if statement here (without breaking it tho)
+      // We need some sort of thing to initialize position of each dart or something
+      if (this.dart_num == 4)
+      {
+        this.dart_num = 0;
+        this.first_dart = true;
+      }
       this.toss = !this.toss;
       this.tossed_at = this.elapsed_seconds;
       this.starting_dart_position = Mat4.translation(0, -1, -5).times(
@@ -167,7 +185,23 @@ export class Carnival extends Scene {
       } else {
         this.first_dart = false;
       }
-      this.visible_dart = !this.visible_dart;
+      if (this.dart_num == 4) // so that we can cycle thru diff darts
+      {
+        this.dart_num = 0;
+        this.first_dart = true;
+      }
+      if (!this.first_dart) {
+        this.dart_num += 1;   // ?? don't u want to increment even if it is ur first dart tho???
+      } else {
+        this.first_dart = false;
+      }
+      console.log(this.dart_num);
+      this.darts[this.dart_num].visible = true;
+    });
+    this.key_triggered_button("Play basketball", ["y"], () => {
+      this.visible_bb = true;
+      this.dt_bb = 0;
+      this.throw_bb = false;
       console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
     });
@@ -203,11 +237,6 @@ export class Carnival extends Scene {
       // this.starting_bb_position = Mat4.translation(0, -1, -5).times(
       //   this.program_state.camera_transform
       // );
-    });
-    this.key_triggered_button("Play basketball", ["y"], () => {
-      this.visible_bb = true;
-      this.dt_bb = 0;
-      this.throw_bb = false;
     });
     this.key_triggered_button("More powerful basketball throw", ["m"], () => {
       this.velocity = this.velocity + 0.5;
@@ -248,7 +277,7 @@ export class Carnival extends Scene {
     const t = program_state.animation_time / 1000;
     //   dt = program_state.animation_delta_time / 1000;
 
-    //=============================================== skybox =============================================
+    //=============================================== skybox & sun =============================================
     let skybox_transform = Mat4.scale(60, 40, 60);
     this.shapes.skybox.draw(
       context,
@@ -256,6 +285,9 @@ export class Carnival extends Scene {
       skybox_transform,
       this.materials.skybox
     );
+    let sun_transform = Mat4.translation(45, 36, -40).times(Mat4.scale(4, 4, 4));
+    this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
+    
     //=============================================== floor =============================================
     let floor_transform = Mat4.scale(60, 0.5, 60);
     this.shapes.floor.draw(
@@ -306,6 +338,7 @@ export class Carnival extends Scene {
 
     //=============================================== balloon =============================================
 
+    const current_dart = this.darts[this.dart_num];
     for (const balloonState of this.balloons) {
       if (balloonState.balloon.collides_with(current_dart.dart)) {
         balloonState.popped = true;
