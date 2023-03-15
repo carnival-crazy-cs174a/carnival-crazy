@@ -22,6 +22,8 @@ const {
   Scene,
 } = tiny;
 
+//put lightining next to the balloons so you can dim the light in the middle
+
 export class Carnival extends Scene {
   constructor() {
     // constructor(): Scenes begin by populating initial values like the Shapes and Materials they'll need.
@@ -47,7 +49,8 @@ export class Carnival extends Scene {
       floor: new Material(new defs.Phong_Shader(), {
         ambient: 1,
         diffusivity: 1,
-        color: hex_color("#7CFC00"),
+        specularity: 0,
+        color: hex_color("#7EC850"),
       }),
     };
 
@@ -64,54 +67,83 @@ export class Carnival extends Scene {
       {
         popped: false,
         balloon: new Balloon(
-          Mat4.translation(0, 3.2, 0.2),
+          Mat4.translation(-5, 3.2, 0.2),
           hex_color("#006400")
         ),
       },
       {
         popped: false,
         balloon: new Balloon(
-          Mat4.translation(1.1, 3.2, 0.2),
+          Mat4.translation(-3.9, 3.2, 0.2),
           hex_color("#ffff00")
         ),
       },
       {
         popped: false,
         balloon: new Balloon(
-          Mat4.translation(2.2, 3.2, 0.2),
+          Mat4.translation(-2.8, 3.2, 0.2),
           hex_color("#a020f0")
         ),
       },
       {
         popped: false,
         balloon: new Balloon(
-          Mat4.translation(-1.1, 3.2, 0.2),
+          Mat4.translation(-6.1, 3.2, 0.2),
           hex_color("#ffa500")
         ),
       },
       {
         popped: false,
         balloon: new Balloon(
-          Mat4.translation(-2.2, 3.2, 0.2),
+          Mat4.translation(-7.2, 3.2, 0.2),
           hex_color("#ff69b4")
         ),
       },
     ];
-    this.dart = new Dart(
-      Mat4.translation(0, -1, -5).times(this.initial_camera_location),
-      hex_color("#ff0000")
-    );
-
+    this.darts = [
+      {
+        dart: new Dart(
+          Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+          hex_color("#ff0000")
+        ),
+        visible: false,
+      },
+      {
+        dart: new Dart(
+          Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+          hex_color("#CFBFAF")
+        ),
+        visible: false,
+      },
+      {
+        dart: new Dart(
+          Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+          hex_color("#077DDF")
+        ),
+        visible: false,
+      },
+      {
+        dart: new Dart(
+          Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+          hex_color("#F6D003")
+        ),
+        visible: false,
+      },
+      {
+        dart: new Dart(
+          Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+          hex_color("#F2337B")
+        ),
+        visible: false,
+      },
+    ];
+    this.dart_num = 0;
     this.toss = false;
     this.elapsed_seconds = 0;
-    this.visible_dart = false;
+    this.first_dart = true;
   }
 
   make_control_panel() {
-    // maybe add a "play darts game" button for each game we implement that zooms you into view
-    // then once you're in the game the buttons available change? like if you're in the darts game then we make a set of controls appear specifically for that game
-    // then when you leave the game those controls disappear
-    // same for if we make it so you can ride the ferris wheel
     this.key_triggered_button("Throw the dart", ["t"], () => {
       this.toss = !this.toss;
       this.tossed_at = this.elapsed_seconds;
@@ -120,7 +152,13 @@ export class Carnival extends Scene {
       );
     });
     this.key_triggered_button("Play darts", ["x"], () => {
-      this.visible_dart = !this.visible_dart;
+      if (!this.first_dart) {
+        this.dart_num += 1;
+      } else {
+        this.first_dart = false;
+      }
+      console.log(this.dart_num);
+      this.darts[this.dart_num].visible = true;
     });
   }
 
@@ -155,7 +193,6 @@ export class Carnival extends Scene {
     // const t = program_state.animation_time / 1000,
     //   dt = program_state.animation_delta_time / 1000;
 
-    // let model_transform = Mat4.identity();
     //=============================================== skybox =============================================
     let skybox_transform = Mat4.scale(60, 40, 60);
     this.shapes.skybox.draw(
@@ -176,9 +213,11 @@ export class Carnival extends Scene {
     this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
 
+    const current_dart = this.darts[this.dart_num];
     for (const balloonState of this.balloons) {
-      if (balloonState.balloon.collides_with(this.dart)) {
+      if (balloonState.balloon.collides_with(current_dart.dart)) {
         balloonState.popped = true;
+        current_dart.visible = false;
       } else if (!balloonState.popped) {
         balloonState.balloon.draw(context, program_state);
       }
@@ -190,16 +229,18 @@ export class Carnival extends Scene {
     );
     console.log(`Dart score: ${dart_score}`);
 
-    this.dart.draw(
-      context,
-      program_state,
-      this.toss
-        ? Mat4.translation(
-            0,
-            0,
-            -(this.elapsed_seconds - this.tossed_at) * 5
-          ).times(this.starting_dart_position)
-        : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
-    );
+    if (current_dart.visible) {
+      current_dart.dart.draw(
+        context,
+        program_state,
+        this.toss
+          ? Mat4.translation(
+              0,
+              0,
+              -(this.elapsed_seconds - this.tossed_at) * 15
+            ).times(this.starting_dart_position)
+          : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
+      );
+    }
   }
 }
