@@ -20,9 +20,18 @@ const {
   Shape,
   Material,
   Scene,
+  Texture,
 } = tiny;
 
-//put lightining next to the balloons so you can dim the light in the middle
+const { Cube, Textured_Phong } = defs;
+
+class Scaled_Cube extends Cube {
+  constructor() {
+    super();
+    for (let i = 0; i < this.arrays.texture_coord.length; i++)
+      this.arrays.texture_coord[i].scale_by(5);
+  }
+}
 
 export class Carnival extends Scene {
   constructor() {
@@ -36,7 +45,7 @@ export class Carnival extends Scene {
       sphere: new defs.Subdivision_Sphere(4),
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
-      floor: new defs.Cube(),
+      floor: new Scaled_Cube(),
     };
 
     // *** Materials
@@ -51,6 +60,13 @@ export class Carnival extends Scene {
         diffusivity: 1,
         specularity: 0,
         color: hex_color("#7EC850"),
+      }),
+      floor2: new Material(new Textured_Phong(), {
+        color: hex_color("#000000"),
+        ambient: 1,
+        diffusivity: 0.1,
+        specularity: 0.1,
+        texture: new Texture("assets/grass.png", "NEAREST"),
       }),
     };
 
@@ -161,7 +177,6 @@ export class Carnival extends Scene {
       if (this.dart_num > 4) {
         this.dart_num = 0;
       }
-      console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
     });
   }
@@ -211,7 +226,7 @@ export class Carnival extends Scene {
       context,
       program_state,
       floor_transform,
-      this.materials.floor
+      this.materials.floor2
     );
 
     this.ferrisWheel.draw(context, program_state);
@@ -219,9 +234,17 @@ export class Carnival extends Scene {
 
     const current_dart = this.darts[this.dart_num];
     for (const balloonState of this.balloons) {
-      if (balloonState.balloon.collides_with(current_dart.dart)) {
+      if (balloonState.popped) {
+        // don't check collisions if balloon is already popped
+        continue;
+      }
+      if (
+        !balloonState.popped &&
+        balloonState.balloon.collides_with(current_dart.dart)
+      ) {
         balloonState.popped = true;
         current_dart.visible = false;
+        console.log("CURRENT COLLIDED: " + this.dart_num);
       } else if (!balloonState.popped) {
         balloonState.balloon.draw(context, program_state);
       }
@@ -232,7 +255,7 @@ export class Carnival extends Scene {
       0
     );
     console.log(`Dart score: ${dart_score}`);
-
+    console.log("number", this.dart_num, "   visible", current_dart.visible);
     if (current_dart.visible) {
       current_dart.dart.draw(
         context,
