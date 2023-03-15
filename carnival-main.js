@@ -5,6 +5,7 @@ import Balloon from "./thingamabobs/balloon.js";
 import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Dart from "./thingamabobs/dart.js";
 import ScoreBoard from "./thingamabobs/scoreboard.js";
+import Basketball from "./thingamabobs/basketball.js";
 
 const {
   Vector,
@@ -34,7 +35,7 @@ export class Carnival extends Scene {
     this.shapes = {
       torus: new defs.Torus(15, 15),
       torus2: new defs.Torus(3, 15),
-      sphere: new defs.Subdivision_Sphere(4),
+      sphere: new defs.Subdivision_Sphere(8),
       circle: new defs.Regular_2D_Polygon(1, 15),
       skybox: new defs.Cube(),
       floor: new defs.Cube(),
@@ -53,6 +54,12 @@ export class Carnival extends Scene {
         specularity: 0,
         color: hex_color("#7EC850"),
       }),
+      sun: new Material(new defs.Phong_Shader(), {
+        ambient: 1,
+        diffusivity: 1,
+        specularity: 1,
+        color: hex_color("#FFE87C"),
+      })
     };
 
     this.initial_camera_location = Mat4.look_at(
@@ -64,6 +71,7 @@ export class Carnival extends Scene {
     this.booth = new Booth();
     this.ferrisWheel = new FerrisWheel();
     this.scoreboard = new ScoreBoard(Mat4.translation(-10, 3, 0));
+   // this.basketball = new Basketball();
 
     this.balloons = [
       {
@@ -139,14 +147,34 @@ export class Carnival extends Scene {
         visible: false,
       },
     ];
-    this.dart_num = 0;
+    this.dart_num = 0;    
+    this.basketball = new Basketball(
+      Mat4.translation(0, -1, -5).times(this.initial_camera_location),
+      hex_color("#ff0000")
+    );
+
     this.toss = false;
     this.elapsed_seconds = 0;
     this.first_dart = true;
+    this.throw_bb = false;
+    this.dt_bb = 0;
+    this.visible_bb = false;
+    this.velocity = 4;
   }
 
   make_control_panel() {
     this.key_triggered_button("Throw the dart", ["t"], () => {
+      // if (!this.first_dart) {
+      //   this.dart_num += 1;
+      // } else {
+      //   this.first_dart = false;
+      // }  // I think we need this if statement here (without breaking it tho)
+      // We need some sort of thing to initialize position of each dart or something
+      if (this.dart_num == 4)
+      {
+        this.dart_num = 0;
+        this.first_dart = true;
+      }
       this.toss = !this.toss;
       this.tossed_at = this.elapsed_seconds;
       this.starting_dart_position = Mat4.translation(0, -1, -5).times(
@@ -154,13 +182,56 @@ export class Carnival extends Scene {
       );
     });
     this.key_triggered_button("Play darts", ["x"], () => {
+      this.toss = false;
       if (!this.first_dart) {
         this.dart_num += 1;
       } else {
         this.first_dart = false;
       }
+      if (this.dart_num > 4) {
+        this.dart_num = 0;
+      }
       console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
+    });
+    this.key_triggered_button("Throw the basketball", ["b"], () => {
+      this.throw_bb = !this.throw_bb;
+      this.dt_bb = 0;
+      this.bb_tossed_at = this.elapsed_seconds;
+      this.starting_bb_position = Mat4.translation(0, -1, -5).times(
+        this.program_state.camera_transform
+      );
+      // this.starting_bb_position = Mat4.translation(0, -1, -5).times(
+      //   this.program_state.camera_transform
+      // );
+    });
+    this.key_triggered_button("Play basketball", ["y"], () => {
+      this.visible_bb = true;
+      this.dt_bb = 0;
+      this.throw_bb = false;
+    });
+    this.key_triggered_button("More powerful basketball throw", ["m"], () => {
+      this.velocity = this.velocity + 0.5;
+    });
+    this.key_triggered_button("Less powerful basketball throw", ["l"], () => {
+      this.velocity = this.velocity - 0.5;
+    });
+    this.key_triggered_button("Throw the basketball", ["b"], () => {
+      this.throw_bb = !this.throw_bb;
+      this.dt_bb = 0;
+      this.bb_tossed_at = this.elapsed_seconds;
+      this.starting_bb_position = Mat4.translation(0, -1, -5).times(
+        this.program_state.camera_transform
+      );
+      // this.starting_bb_position = Mat4.translation(0, -1, -5).times(
+      //   this.program_state.camera_transform
+      // );
+    });
+    this.key_triggered_button("More powerful basketball throw", ["m"], () => {
+      this.velocity = this.velocity + 0.5;
+    });
+    this.key_triggered_button("Less powerful basketball throw", ["l"], () => {
+      this.velocity = this.velocity - 0.5;
     });
   }
 
@@ -192,10 +263,10 @@ export class Carnival extends Scene {
     // The parameters of the Light are: position, color, size
     program_state.lights = [new Light(light_position, color(1, 1, 1, 1), 1000)];
 
-    // const t = program_state.animation_time / 1000,
+    const t = program_state.animation_time / 1000;
     //   dt = program_state.animation_delta_time / 1000;
 
-    //=============================================== skybox =============================================
+    //=============================================== skybox & sun =============================================
     let skybox_transform = Mat4.scale(60, 40, 60);
     this.shapes.skybox.draw(
       context,
@@ -203,6 +274,9 @@ export class Carnival extends Scene {
       skybox_transform,
       this.materials.skybox
     );
+    let sun_transform = Mat4.translation(45, 36, -40).times(Mat4.scale(4, 4, 4));
+    this.shapes.sphere.draw(context, program_state, sun_transform, this.materials.sun);
+    
     //=============================================== floor =============================================
     let floor_transform = Mat4.scale(60, 0.5, 60);
     this.shapes.floor.draw(
@@ -211,9 +285,46 @@ export class Carnival extends Scene {
       floor_transform,
       this.materials.floor
     );
-
+    
     this.ferrisWheel.draw(context, program_state);
     this.booth.draw(context, program_state);
+
+//    this.basketball.draw(context, program_state);
+
+    //=============================================== basketball =============================================
+    const gravity = -1.9;
+    const init_height = 0;
+   // const velocity = 4;
+    const dt = program_state.animation_delta_time / 1000;
+    console.log("this.throw_bb: " + this.throw_bb);
+
+    // if (this.throw_bb) {
+    //   this.basketball.draw(
+    //     context,
+    //     program_state,
+    //   );
+    // }
+    // ball_transform = (Mat4.translation(this.time_bb, ball_y, 10)).times(Mat4.scale(0.3, 0.3, 0.3)).times(Mat4.rotation(this.time_bb, 0, 0, 1)).times(ball_transform);    // T * S * R * I
+    if (this.throw_bb)
+    {
+      this.dt_bb = this.dt_bb + dt;
+    }
+    let ball_y = init_height + this.velocity*this.dt_bb + 0.5*gravity*this.dt_bb*this.dt_bb;
+    if (this.visible_bb) {
+      this.basketball.draw(
+          context,
+          program_state,
+          this.throw_bb
+            ? Mat4.translation(
+                0,
+                ball_y,
+                -(this.elapsed_seconds - this.bb_tossed_at) * 6
+              ).times(this.starting_bb_position)
+            : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
+        );
+    }
+
+    //=============================================== balloon =============================================
 
     const current_dart = this.darts[this.dart_num];
     for (const balloonState of this.balloons) {
@@ -225,6 +336,7 @@ export class Carnival extends Scene {
       }
     }
 
+    //=============================================== dart =============================================
     const dart_score = this.balloons.reduce(
       (accumulator, current) => accumulator + current.popped,
       0
