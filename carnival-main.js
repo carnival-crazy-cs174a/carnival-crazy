@@ -152,10 +152,14 @@ export class Carnival extends Scene {
       );
     });
     this.key_triggered_button("Play darts", ["x"], () => {
+      this.toss = false;
       if (!this.first_dart) {
         this.dart_num += 1;
       } else {
         this.first_dart = false;
+      }
+      if (this.dart_num > 4) {
+        this.dart_num = 0;
       }
       console.log(this.dart_num);
       this.darts[this.dart_num].visible = true;
