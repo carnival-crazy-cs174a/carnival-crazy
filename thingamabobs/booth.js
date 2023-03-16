@@ -81,13 +81,13 @@ export default class Booth {
       specularity: 0.1,
       texture: new Texture("assets/balloondarts.png"),
     }),
-    ring_toss_table: new Material(this.shaders.image, {
-      color: hex_color("#000000"),
-      ambient: 1,
-      diffusivity: 0.1,
-      specularity: 0.1,
-      texture: new Texture("assets/ringtoss.png"),
-    }),
+    // ring_toss_table: new Material(this.shaders.image, {
+    //   color: hex_color("#000000"),
+    //   ambient: 1,
+    //   diffusivity: 0.1,
+    //   specularity: 0.1,
+    //   texture: new Texture("assets/ringtoss.png"),
+    // }),
     ducks_table: new Material(this.shaders.image, {
       color: hex_color("#000000"),
       ambient: 1,
@@ -108,6 +108,13 @@ export default class Booth {
       diffusivity: 0.1,
       specularity: 0.1,
       texture: new Texture("assets/buckets.png"),
+    }),
+    bottle_toss_table: new Material(this.shaders.image, {
+      color: hex_color("#000000"),
+      ambient: 1,
+      diffusivity: 0.1,
+      specularity: 0.1,
+      texture: new Texture("assets/bottle.png"),
     }),
   };
 
@@ -245,12 +252,12 @@ export default class Booth {
           table_transform,
           this.materials.darts_table
         );
-      } else if (table_color == "ringtoss") {
+      } else if (table_color == "bottletoss") {
         this.shapes.table.draw(
           context,
           program_state,
           table_transform,
-          this.materials.ring_toss_table
+          this.materials.bottle_toss_table
         );
       } else if (table_color == "ducks") {
         this.shapes.table.draw(
@@ -381,7 +388,7 @@ export default class Booth {
       booth_center_x = 15;
       booth_center_z = 15;
       roof_color = "yellow";
-      table_color = "ringtoss";
+      table_color = "bottletoss";
       draw_booth(
         context,
         program_state,
