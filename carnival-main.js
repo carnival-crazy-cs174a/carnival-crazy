@@ -6,6 +6,9 @@ import FerrisWheel from "./thingamabobs/ferris-wheel.js";
 import Dart from "./thingamabobs/dart.js";
 import ScoreBoard from "./thingamabobs/scoreboard.js";
 import Basketball from "./thingamabobs/basketball.js";
+import Duck from "./thingamabobs/newDuck.js";
+import milkCarton from "./thingamabobs/milkCarton.js";
+import Candy from "./thingamabobs/candy.js";
 
 const {
   Vector,
@@ -88,6 +91,9 @@ export class Carnival extends Scene {
     this.ferrisWheel = new FerrisWheel();
     this.scoreboard = new ScoreBoard(Mat4.translation(-10, 3, 0));
     // this.basketball = new Basketball();
+    this.duck = new Duck();
+    this.candy = new Candy();
+    this.milkCarton = new milkCarton();
 
     this.balloons = [
       {
@@ -367,6 +373,37 @@ export class Carnival extends Scene {
           : Mat4.translation(0, -1, -5).times(program_state.camera_transform)
       );
     }
+  //======================= kellys stuff =====================================
+    //milkCarton
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 14.2), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 14), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 13.8), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 14.1), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 13.9), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.55, 14), hex_color("#FFFFFF"));
+
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 15.2), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 15), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 14.8), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 15.1), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 14.9), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.55, 15), hex_color("#FFFFFF"));
+
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 16.2), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 16), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 2.8, 15.8), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 16.1), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.2, 15.9), hex_color("#FFFFFF"));
+    this.milkCarton.draw(context, program_state,Mat4.translation(14, 3.55, 16), hex_color("#FFFFFF"));
+
+    //ducks!!!!
+    this.duck.draw(context, program_state,Mat4.translation(-15, 3.2, 14), hex_color("#FFFFFF"));
+    this.duck.draw(context, program_state,Mat4.translation(-15, 3.2, 12.5), hex_color("#FFFFFF"));
+    this.duck.draw(context, program_state,Mat4.translation(-15, 3.2, 11), hex_color("#FFFFFF"));
+
+    //candy!!!
+    this.candy.draw(context, program_state);
+
 
     this.scoreboard.draw(context, program_state, dart_score);
   }
