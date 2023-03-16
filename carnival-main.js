@@ -82,7 +82,7 @@ export class Carnival extends Scene {
     };
 
     this.initial_camera_location = Mat4.look_at(
-      vec3(0, 3, 25),
+      vec3(0, 3, 60),
       vec3(0, 3, 0),
       vec3(0, 1, 0)
     );
@@ -198,16 +198,6 @@ export class Carnival extends Scene {
       this.darts[this.dart_num].visible = true;
     });
     this.key_triggered_button("Throw the dart", ["t"], () => {
-      // if (!this.first_dart) {
-      //   this.dart_num += 1;
-      // } else {
-      //   this.first_dart = false;
-      // }  // I think we need this if statement here (without breaking it tho)
-      // We need some sort of thing to initialize position of each dart or something
-      if (this.dart_num == 4) {
-        this.dart_num = 0;
-        this.first_dart = true;
-      }
       this.toss = !this.toss;
       this.tossed_at = this.elapsed_seconds;
       this.starting_dart_position = Mat4.translation(0, -1, -5).times(
